@@ -4,6 +4,7 @@ import br.com.marcosxavierdev.apitestes.domain.User;
 import br.com.marcosxavierdev.apitestes.domain.dto.UserDTO;
 import br.com.marcosxavierdev.apitestes.repositories.UserRepository;
 import br.com.marcosxavierdev.apitestes.service.UserService;
+import br.com.marcosxavierdev.apitestes.service.exceptions.DataIntegrityViolationException;
 import br.com.marcosxavierdev.apitestes.service.exceptions.ObjectNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,22 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public User create(UserDTO obj) {
+        findByEmail(obj);
         return userRepository.save(mapper.map(obj, User.class));
     }
+
+    @Override
+    public User update(UserDTO obj) {
+        findByEmail(obj);
+        return userRepository.save(mapper.map(obj, User.class));
+    }
+
+    private void findByEmail(UserDTO obj){
+        Optional<User> user = userRepository.findByEmail(obj.getEmail());
+        if(user.isPresent() && !user.get().getId().equals(obj.getId())){
+            throw new DataIntegrityViolationException("Email já cadastrado no sistema");
+        }
+
+    }
+
 }
