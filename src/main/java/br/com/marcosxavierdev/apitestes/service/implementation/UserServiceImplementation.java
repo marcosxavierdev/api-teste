@@ -55,7 +55,6 @@ public class UserServiceImplementation implements UserService {
         if(user.isPresent() && !user.get().getId().equals(obj.getId())){
             throw new DataIntegrityViolationException("Email já cadastrado no sistema");
         }
-
     }
 
 }
