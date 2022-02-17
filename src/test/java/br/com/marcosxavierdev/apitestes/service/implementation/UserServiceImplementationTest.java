@@ -3,6 +3,7 @@ package br.com.marcosxavierdev.apitestes.service.implementation;
 import br.com.marcosxavierdev.apitestes.domain.User;
 import br.com.marcosxavierdev.apitestes.domain.dto.UserDTO;
 import br.com.marcosxavierdev.apitestes.repositories.UserRepository;
+import br.com.marcosxavierdev.apitestes.service.exceptions.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -59,6 +60,18 @@ class UserServiceImplementationTest {
         assertEquals(NAME,response.getName());
         assertEquals(EMAIL,response.getEmail());
         assertEquals(PASSWORD,response.getPassword());
+    }
+
+    @Test
+    void whenFindByIdThenReturnAnObjectNotFoundException() {
+        when(repository.findById(anyInt())).thenThrow(new ObjectNotFoundException("Objeto não encontrado"));
+
+        try{
+            service.findById(ID);
+        } catch (Exception ex) {
+            assertEquals(ObjectNotFoundException.class, ex.getClass());
+            assertEquals("Objeto não encontrado", ex.getMessage());
+        }
     }
 
     @Test
